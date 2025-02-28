@@ -5,10 +5,21 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Copy, Download, ExternalLink, Github } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [isLoading, setIsLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [showDownloadOptions, setShowDownloadOptions] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Simulate loading delay for a smoother experience
@@ -18,6 +29,77 @@ const Index = () => {
     
     return () => clearTimeout(timer);
   }, []);
+
+  const handleDownload = () => {
+    setShowDownloadOptions(true);
+  };
+
+  const handleCopyCommand = (command: string) => {
+    navigator.clipboard.writeText(command);
+    toast({
+      title: "Command copied!",
+      description: "The command has been copied to your clipboard.",
+    });
+  };
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubscribing(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubscribing(false);
+      setEmail("");
+      toast({
+        title: "Subscription successful!",
+        description: "You've been added to our mailing list. Thank you!",
+      });
+    }, 1500);
+  };
+
+  const handleDownloadConfirm = () => {
+    // Simulate download start
+    toast({
+      title: "Download started!",
+      description: "Your download should begin shortly.",
+    });
+    
+    // Create a temporary link to download (in a real app, this would be an actual file)
+    const link = document.createElement('a');
+    link.href = '#'; // This would be the actual file URL
+    link.setAttribute('download', 'bdd-framework-template.zip');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setShowDownloadOptions(false);
+  };
+
+  const openGithub = () => {
+    window.open('https://github.com', '_blank');
+    toast({
+      title: "Redirecting to GitHub",
+      description: "Opening the repository in a new tab",
+    });
+  };
+
+  const openDocs = () => {
+    window.open('#/documentation', '_blank');
+    toast({
+      title: "Opening documentation",
+      description: "Documentation will open in a new tab",
+    });
+  };
+
+  const handleViewDemo = () => {
+    toast({
+      title: "Demo access",
+      description: "Redirecting to the live demo environment",
+    });
+    setTimeout(() => {
+      window.open('https://demo.example.com', '_blank');
+    }, 1000);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 transition-colors duration-300">
@@ -30,13 +112,25 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors duration-200">
+              <Button 
+                variant="ghost" 
+                className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors duration-200"
+                onClick={openDocs}
+              >
                 Documentation
               </Button>
-              <Button variant="ghost" className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors duration-200">
+              <Button 
+                variant="ghost" 
+                className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors duration-200"
+                onClick={openGithub}
+              >
+                <Github className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
-              <Button className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white transition-all duration-300 shadow-md hover:shadow-lg">
+              <Button 
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white transition-all duration-300 shadow-md hover:shadow-lg"
+                onClick={handleDownload}
+              >
                 Get Started
               </Button>
             </div>
@@ -67,11 +161,18 @@ const Index = () => {
                   for seamless UI, API, and database testing with CI/CD integration.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
-                  <Button className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors duration-300 px-6 py-3 rounded-lg shadow-md hover:shadow-lg">
-                    Download Template
+                  <Button 
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors duration-300 px-6 py-3 rounded-lg shadow-md hover:shadow-lg"
+                    onClick={handleDownload}
+                  >
+                    <Download className="mr-2 h-4 w-4" /> Download Template
                   </Button>
-                  <Button variant="outline" className="border-indigo-200 dark:border-indigo-800 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 text-indigo-600 dark:text-indigo-400 transition-colors duration-300 px-6 py-3 rounded-lg shadow-md hover:shadow-lg">
-                    View Demo
+                  <Button 
+                    variant="outline" 
+                    className="border-indigo-200 dark:border-indigo-800 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 text-indigo-600 dark:text-indigo-400 transition-colors duration-300 px-6 py-3 rounded-lg shadow-md hover:shadow-lg"
+                    onClick={handleViewDemo}
+                  >
+                    <ExternalLink className="mr-2 h-4 w-4" /> View Demo
                   </Button>
                 </div>
               </div>
@@ -164,7 +265,11 @@ const Index = () => {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button variant="outline" className="w-full border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 text-indigo-600 dark:text-indigo-400 transition-colors duration-300">
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 text-indigo-600 dark:text-indigo-400 transition-colors duration-300"
+                      onClick={() => setActiveTab("features")}
+                    >
                       Learn More
                     </Button>
                   </CardFooter>
@@ -337,6 +442,16 @@ const Index = () => {
   └── README.md           # Documentation`}
                       </pre>
                     </div>
+                    <div className="mt-4 flex justify-end">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex items-center gap-2"
+                        onClick={() => handleCopyCommand("/bdd-framework")}
+                      >
+                        <Copy className="h-4 w-4" /> Copy Structure
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -395,6 +510,52 @@ jobs:
         name: test-reports
         path: target/cucumber-reports/`}
                         </pre>
+                        <div className="mt-4 flex justify-end">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex items-center gap-2"
+                            onClick={() => handleCopyCommand(`name: BDD Test Automation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        
+    - name: Build with Maven
+      run: mvn clean install -DskipTests
+      
+    - name: Run Smoke Tests
+      run: mvn test -Dcucumber.options="--tags @Smoke"
+      
+    - name: Generate Cucumber Report
+      if: always()
+      run: mvn cluecumber-report:reporting
+      
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: target/cucumber-reports/`)}
+                          >
+                            <Copy className="h-4 w-4" /> Copy YAML
+                          </Button>
+                        </div>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -497,17 +658,68 @@ jobs:
                   <div className="bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 transition-colors duration-300">
                     <code className="text-gray-800 dark:text-gray-200 transition-colors duration-300">mvn clean test</code>
                     <p className="text-gray-600 dark:text-gray-400 text-xs mt-1 transition-colors duration-300">Run all tests</p>
+                    <Button 
+                      variant="ghost" 
+                      size="xs" 
+                      className="mt-2 text-indigo-600 dark:text-indigo-400 p-0 h-auto flex items-center gap-1"
+                      onClick={() => handleCopyCommand("mvn clean test")}
+                    >
+                      <Copy className="h-3 w-3" /> Copy
+                    </Button>
                   </div>
                   <div className="bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 transition-colors duration-300">
                     <code className="text-gray-800 dark:text-gray-200 transition-colors duration-300">mvn test -Dcucumber.options="--tags @Smoke"</code>
                     <p className="text-gray-600 dark:text-gray-400 text-xs mt-1 transition-colors duration-300">Run only Smoke tests</p>
+                    <Button 
+                      variant="ghost" 
+                      size="xs" 
+                      className="mt-2 text-indigo-600 dark:text-indigo-400 p-0 h-auto flex items-center gap-1"
+                      onClick={() => handleCopyCommand('mvn test -Dcucumber.options="--tags @Smoke"')}
+                    >
+                      <Copy className="h-3 w-3" /> Copy
+                    </Button>
                   </div>
                   <div className="bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 transition-colors duration-300">
                     <code className="text-gray-800 dark:text-gray-200 transition-colors duration-300">mvn test -Dcucumber.options="--tags @Regression"</code>
                     <p className="text-gray-600 dark:text-gray-400 text-xs mt-1 transition-colors duration-300">Run Regression tests</p>
+                    <Button 
+                      variant="ghost" 
+                      size="xs" 
+                      className="mt-2 text-indigo-600 dark:text-indigo-400 p-0 h-auto flex items-center gap-1"
+                      onClick={() => handleCopyCommand('mvn test -Dcucumber.options="--tags @Regression"')}
+                    >
+                      <Copy className="h-3 w-3" /> Copy
+                    </Button>
                   </div>
                 </div>
               </div>
+            </section>
+
+            {/* Newsletter subscription section */}
+            <section className="my-16 max-w-3xl mx-auto bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-8 border border-indigo-100 dark:border-indigo-800 transition-colors duration-300">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">Stay Updated</h2>
+                <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
+                  Subscribe to our newsletter for updates, new features, and best practices
+                </p>
+              </div>
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
+                <Input
+                  type="email"
+                  placeholder="Your email address"
+                  className="flex-grow"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <Button 
+                  type="submit" 
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors duration-300"
+                  disabled={isSubscribing}
+                >
+                  {isSubscribing ? "Subscribing..." : "Subscribe"}
+                </Button>
+              </form>
             </section>
           </>
         )}
@@ -526,17 +738,17 @@ jobs:
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4 transition-colors duration-300">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
+                  <a href="#" onClick={openDocs} className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
                     Documentation
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
+                  <a href="#" onClick={handleViewDemo} className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
                     Examples
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
+                  <a href="#" onClick={openGithub} className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
                     GitHub Repository
                   </a>
                 </li>
@@ -568,6 +780,57 @@ jobs:
           </div>
         </div>
       </footer>
+
+      {/* Download Dialog */}
+      <Dialog open={showDownloadOptions} onOpenChange={setShowDownloadOptions}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Download Framework Template</DialogTitle>
+            <DialogDescription>
+              Start building your test automation framework with our pre-configured template.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="terms" className="text-base">Terms and Conditions</Label>
+              <div className="rounded-md border p-4 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 h-40 overflow-auto">
+                <p>By downloading this framework template, you agree to the following terms:</p>
+                <ul className="list-disc pl-5 pt-2 space-y-1">
+                  <li>This template is provided as-is without any warranties.</li>
+                  <li>You may use this template for personal or commercial projects.</li>
+                  <li>Attribution is appreciated but not required.</li>
+                  <li>You may modify the template to suit your needs.</li>
+                  <li>You may not redistribute this template as your own.</li>
+                </ul>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="terms" checked={acceptTerms} onCheckedChange={(checked) => setAcceptTerms(checked as boolean)} />
+              <label
+                htmlFor="terms"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                I accept the terms and conditions
+              </label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowDownloadOptions(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleDownloadConfirm} 
+              disabled={!acceptTerms}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors duration-300"
+            >
+              Download Now
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
