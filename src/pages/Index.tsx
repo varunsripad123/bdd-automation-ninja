@@ -59,7 +59,7 @@ const Index = () => {
       
       toast({
         title: "Download Started",
-        description: `Downloading BDD Automation Ninja. A confirmation email will be sent to ${email}.`,
+        description: `Downloading BDD Automation Ninja. You'll receive installation instructions in the ZIP file.`,
       });
       
       setDownloadOpen(false);
