@@ -660,7 +660,7 @@ jobs:
                     <p className="text-gray-600 dark:text-gray-400 text-xs mt-1 transition-colors duration-300">Run all tests</p>
                     <Button 
                       variant="ghost" 
-                      size="xs" 
+                      size="sm" 
                       className="mt-2 text-indigo-600 dark:text-indigo-400 p-0 h-auto flex items-center gap-1"
                       onClick={() => handleCopyCommand("mvn clean test")}
                     >
@@ -672,7 +672,7 @@ jobs:
                     <p className="text-gray-600 dark:text-gray-400 text-xs mt-1 transition-colors duration-300">Run only Smoke tests</p>
                     <Button 
                       variant="ghost" 
-                      size="xs" 
+                      size="sm" 
                       className="mt-2 text-indigo-600 dark:text-indigo-400 p-0 h-auto flex items-center gap-1"
                       onClick={() => handleCopyCommand('mvn test -Dcucumber.options="--tags @Smoke"')}
                     >
@@ -684,7 +684,7 @@ jobs:
                     <p className="text-gray-600 dark:text-gray-400 text-xs mt-1 transition-colors duration-300">Run Regression tests</p>
                     <Button 
                       variant="ghost" 
-                      size="xs" 
+                      size="sm" 
                       className="mt-2 text-indigo-600 dark:text-indigo-400 p-0 h-auto flex items-center gap-1"
                       onClick={() => handleCopyCommand('mvn test -Dcucumber.options="--tags @Regression"')}
                     >
