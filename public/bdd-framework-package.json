@@ -1,0 +1,62 @@
+
+{
+  "name": "bdd-automation-ninja",
+  "version": "1.0.0",
+  "description": "A complete BDD testing framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js",
+    "report": "cucumber-js -f json:reports/cucumber_report.json && node ./support/generate-html-report.js",
+    "test:ci": "cucumber-js -f json:reports/cucumber_report.json -f summary",
+    "setup": "node ./setup.js"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^8.10.0",
+    "selenium-webdriver": "^4.8.2",
+    "chai": "^4.3.7",
+    "chromedriver": "^110.0.0",
+    "cucumber-html-reporter": "^5.5.0",
+    "dotenv": "^16.0.3",
+    "axios": "^1.3.4",
+    "winston": "^3.8.2",
+    "glob": "^9.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.36.0",
+    "eslint-plugin-cucumber": "^2.0.0",
+    "prettier": "^2.8.4",
+    "husky": "^8.0.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "prettier --write ."
+    }
+  },
+  "directories": {
+    "features": "./features",
+    "stepDefinitions": "./step_definitions",
+    "support": "./support",
+    "reports": "./reports"
+  },
+  "files": [
+    "features",
+    "step_definitions",
+    "support",
+    "cucumber.js",
+    "setup.js",
+    "README.md"
+  ],
+  "keywords": [
+    "bdd",
+    "cucumber",
+    "testing",
+    "automation",
+    "selenium",
+    "gherkin"
+  ],
+  "author": "BDD Automation Ninja Team",
+  "license": "MIT"
+}

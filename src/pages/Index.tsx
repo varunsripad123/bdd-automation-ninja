@@ -1,17 +1,22 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowDownToLine, ExternalLink } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
+import { Checkbox } from "@/components/ui/checkbox";
+import { downloadFramework } from "@/utils/downloadFramework";
 
 const Index = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [isDownloadOpen, setDownloadOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const overviewSection = useRef(null);
   const featuresSection = useRef(null);
   const cicdSection = useRef(null);
@@ -23,26 +28,53 @@ const Index = () => {
   }, []);
 
   const handleDownloadClick = () => {
+    setDownloadOpen(true);
+  };
+
+  const handleDownloadFramework = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!email) {
       toast({
         title: "Email Required",
         description: "Please enter your email to proceed with the download.",
         variant: "destructive",
       });
-      setDownloadOpen(true);
       return;
     }
 
-    toast({
-      title: "Download Started",
-      description: `Downloading BDD Automation Ninja. A confirmation email will be sent to ${email}.`,
-    });
-    setDownloadOpen(false);
-  };
+    if (!acceptTerms) {
+      toast({
+        title: "Terms Required",
+        description: "Please accept the terms and conditions to proceed.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleDownloadClick();
+    setIsDownloading(true);
+    
+    try {
+      await downloadFramework(email);
+      
+      toast({
+        title: "Download Started",
+        description: `Downloading BDD Automation Ninja. A confirmation email will be sent to ${email}.`,
+      });
+      
+      setDownloadOpen(false);
+      // Reset form
+      setEmail("");
+      setAcceptTerms(false);
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "There was an error downloading the framework. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const handleOpenDocs = () => {
@@ -125,7 +157,6 @@ const Index = () => {
                 >
                   GitHub
                 </Button>
-                {/* Replace the View Demo button with a Link component */}
                 <Link to="/demo">
                   <Button 
                     variant="outline" 
@@ -214,17 +245,14 @@ const Index = () => {
       )}
       
       <Dialog open={isDownloadOpen} onOpenChange={setDownloadOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline">Download</Button>
-        </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Download BDD Automation Ninja</DialogTitle>
             <DialogDescription>
-              Enter your email address to receive a download link.
+              Enter your email address to receive a download link and updates.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleEmailSubmit}>
+          <form onSubmit={handleDownloadFramework}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
@@ -236,12 +264,34 @@ const Index = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   className="col-span-3" 
                   type="email" 
+                  required
                 />
               </div>
+              
+              <div className="flex items-center space-x-2 mt-2">
+                <Checkbox 
+                  id="terms" 
+                  checked={acceptTerms}
+                  onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I accept the terms and conditions
+                </label>
+              </div>
             </div>
-            <Button type="submit">
-              Submit
-            </Button>
+            <div className="flex justify-end">
+              <Button 
+                type="submit" 
+                disabled={!email || !acceptTerms || isDownloading}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              >
+                {isDownloading ? "Downloading..." : "Download Now"}
+                {!isDownloading && <ArrowDownToLine className="ml-2 h-4 w-4" />}
+              </Button>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
